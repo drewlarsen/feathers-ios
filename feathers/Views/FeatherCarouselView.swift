@@ -13,7 +13,7 @@ struct FeatherCarouselView: View {
     let feathers: [Feather]
     @Binding var currentIndex: Int
     @GestureState private var dragOffset: CGSize = .zero
-
+    
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .topLeading) {
@@ -47,7 +47,7 @@ struct FeatherCarouselView: View {
             )
         }
     }
-
+    
     private func handleSwipe(_ val: DragGesture.Value) {
         let h = val.translation.width, v = val.translation.height
         if abs(h) > abs(v) {
