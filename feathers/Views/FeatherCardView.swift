@@ -17,7 +17,7 @@ struct FeatherCardView: View {
                     img
                         .resizable()
                         .scaledToFill()
-                        // .clipped()
+                    // .clipped()
                 } placeholder: {
                     ProgressView()
                 }
@@ -27,7 +27,9 @@ struct FeatherCardView: View {
                     .foregroundColor(.gray)
                     .padding(8)
             }
-            .background(Color.red.opacity(0.1)) // Temporary background to see frame
+            .border(Color(.lightGray).opacity(0.2), width: 1)
+            .background( Color.white)
+            .cornerRadius(2)
         }
     }
 }
