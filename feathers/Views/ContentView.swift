@@ -41,9 +41,9 @@ struct ContentView: View {
                 }
                 .tag(2)
             
-            SettingsView()
+            MinituresView()
                 .tabItem {
-                    Label("Settings", systemImage: "gear")
+                    Label("Minitures", systemImage: "sparkles")
                 }
                 .tag(3)
         }

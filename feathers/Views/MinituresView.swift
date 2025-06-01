@@ -1,12 +1,12 @@
 import SwiftUI
 
-struct SettingsView: View {
+struct MinituresView: View {
     var body: some View {
         NavigationView {
             GeometryReader { geometry in
                 VStack {
                     Spacer()
-                    Text("Settings Coming Soon")
+                    Text("Minitures Coming Soon")
                         .font(.title2)
                         .foregroundColor(.secondary)
                     Spacer()
@@ -14,7 +14,7 @@ struct SettingsView: View {
                 .frame(maxWidth: .infinity)
             }
             .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("Settings")
+            .navigationTitle("Minitures")
         }
     }
 } 
