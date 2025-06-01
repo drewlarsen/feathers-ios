@@ -31,6 +31,13 @@ struct ContentView: View {
         return Color.fromRGBString(rgb)
     }
     
+    private var foregroundColor: Color {
+        guard !feathers.isEmpty,
+              let rgb = feathers[currentIndex].dark_color_rgb
+        else { return .white }
+        return Color.fromRGBString(rgb)
+    }
+    
     var body: some View {
         ZStack {
             backgroundColor
@@ -68,6 +75,7 @@ struct ContentView: View {
                     
                     Text("\(feathers[currentIndex].name ?? "")")
                         .font(.headline)
+                        .foregroundColor(foregroundColor)
                         .multilineTextAlignment(.center)
                     
                     //          Text("Rendered: \(Int(renderedCardSize.width)) x \(Int(renderedCardSize.height)) px")
@@ -102,7 +110,7 @@ struct ContentView: View {
         .sheet(isPresented: $isShowingWebSheet) {
             // Construct the URL using the current feather’s number:
             if let url = URL(string: "https://www.shaynalarsen.art/feathers/\(feathers[currentIndex].number)") {
-                WebView(url: url)                       // WebView is your UIKit wrapper around WKWebView
+                WebView(url: url)
                     .edgesIgnoringSafeArea(.bottom)
             } else {
                 Color.white  // Fallback if URL creation fails
