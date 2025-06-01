@@ -39,77 +39,76 @@ struct ContentView: View {
     }
     
     var body: some View {
-        ZStack {
-            backgroundColor
-                .ignoresSafeArea()
-                .animation(.easeInOut(duration: 0.5), value: currentIndex)
-            
-            if feathers.isEmpty {
-                ProgressView("Loading…")
-                    .onAppear { load() }
-            } else {
-                VStack(spacing: 8) {
-                    TabView(selection: $currentIndex) {
-                        ForEach(feathers.indices, id: \.self) { idx in
-                            FeatherCardView(feather: feathers[idx])
-                            // 1: fix each card to the 1:2 ratio
-                                .frame(width: cardWidth, height: cardHeight)
-                            // 2: apply parallax + focus scaling
-                                .scaleEffect(idx == currentIndex ? 1 : 0.95)
-                            //                  .rotation3DEffect(
-                            //                    Angle(degrees: Double(idx - currentIndex) * 10),
-                            //                    axis: (x: 0, y: 1, z: 0),
-                            //                    perspective: 0.7
-                            //                  )
-                                .animation(.easeInOut(duration: 0.3), value: currentIndex)
-                                .tag(idx)
-                                .onTapGesture {
-                                    isShowingWebSheet = true
-                                }
+        NavigationView {
+            ZStack {
+                backgroundColor
+                    .ignoresSafeArea()
+                    .animation(.easeInOut(duration: 0.5), value: currentIndex)
+                
+                if feathers.isEmpty {
+                    ProgressView("Loading…")
+                        .onAppear { load() }
+                } else {
+                    VStack(spacing: 8) {
+                        TabView(selection: $currentIndex) {
+                            ForEach(feathers.indices, id: \.self) { idx in
+                                FeatherCardView(feather: feathers[idx])
+                                    .frame(width: cardWidth, height: cardHeight)
+                                    .scaleEffect(idx == currentIndex ? 1 : 0.95)
+                                    .animation(.easeInOut(duration: 0.3), value: currentIndex)
+                                    .tag(idx)
+                                    .onTapGesture {
+                                        isShowingWebSheet = true
+                                    }
+                            }
+                        }
+                        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                        .animation(.easeInOut(duration: 0.3), value: currentIndex)
+                        .frame(height: cardHeight + shadowPadding * 2)
+                        
+                        Text("\(feathers[currentIndex].name ?? "")")
+                            .font(.headline)
+                            .foregroundColor(foregroundColor)
+                            .multilineTextAlignment(.center)
+                        
+                        HStack(spacing: 40) {
+                            Button {
+                                currentIndex = 0
+                            } label: {
+                                Image(systemName: "backward.end")
+                                    .font(.title2)
+                            }
+                            
+                            Button {
+                                currentIndex = Int.random(in: 0..<feathers.count)
+                            } label: {
+                                Image(systemName: "shuffle")
+                                    .font(.title2)
+                            }
+                            
+                            Button {
+                                currentIndex = feathers.count - 1
+                            } label: {
+                                Image(systemName: "forward.end")
+                                    .font(.title2)
+                            }
                         }
                     }
-                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                    .animation(.easeInOut(duration: 0.3), value: currentIndex)
-                    .frame(height: cardHeight + shadowPadding * 2)
-                    
-                    
-                    Text("\(feathers[currentIndex].name ?? "")")
-                        .font(.headline)
-                        .foregroundColor(foregroundColor)
-                        .multilineTextAlignment(.center)
-                    
-                    //          Text("Rendered: \(Int(renderedCardSize.width)) x \(Int(renderedCardSize.height)) px")
-                    //            .font(.subheadline)
-                    //            .foregroundColor(.secondary)
-                    
-                    HStack(spacing: 40) {
-                        Button {
-                            currentIndex = 0
-                        } label: {
-                            Image(systemName: "backward.end")
-                                .font(.title2)
-                        }
-                        
-                        Button {
-                            currentIndex = Int.random(in: 0..<feathers.count)
-                        } label: {
-                            Image(systemName: "shuffle")
-                                .font(.title2)
-                        }
-                        
-                        Button {
-                            currentIndex = feathers.count - 1
-                        } label: {
-                            Image(systemName: "forward.end")
-                                .font(.title2)
-                        }
+                }
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        shareFeather()
+                    } label: {
+                        Image(systemName: "square.and.arrow.up")
                     }
                 }
             }
         }
         .sheet(isPresented: $isShowingWebSheet) {
-            // Construct the URL using the current feather’s number:
-            if let url = URL(string: "https://www.shaynalarsen.art/feathers/\(feathers[currentIndex].number)") {
+            if let url = URL(string: "https://www.shaynalarsen.art/feathers/\(feathers[currentIndex].urlPath)") {
                 WebView(url: url)
                     .edgesIgnoringSafeArea(.bottom)
             } else {
@@ -130,6 +129,25 @@ struct ContentView: View {
             case .failure(let err):
                 print("Error fetching: \(err)")
             }
+        }
+    }
+    
+    private func shareFeather() {
+        guard !feathers.isEmpty else { return }
+        
+        let feather = feathers[currentIndex]
+        let items: [Any] = [
+            "Check out this beautiful feather by Shayna Larsen!",
+            URL(string: "https://www.shaynalarsen.art/feathers/\(feather.urlPath)")!
+        ]
+        
+        let activityVC = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        
+        // Present the share sheet
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first,
+           let rootVC = window.rootViewController {
+            rootVC.present(activityVC, animated: true)
         }
     }
 }

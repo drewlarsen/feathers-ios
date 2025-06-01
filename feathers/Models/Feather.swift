@@ -68,6 +68,21 @@ struct Feather: Identifiable, Codable {
     let createdAt: String?
     let updatedAt: String?
     
+    var nameAsTag: String {
+        guard let name = name else { return String(number) }
+        return name
+            .lowercased()
+            .components(separatedBy: CharacterSet.alphanumerics.inverted)
+            .joined(separator: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: "  ", with: " ")
+            .replacingOccurrences(of: " ", with: "-")
+    }
+    
+    var urlPath: String {
+        "\(number)-\(nameAsTag)"
+    }
+    
     struct Color: Codable {
         let population: Int
         let rgb: [Double]
