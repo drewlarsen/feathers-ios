@@ -5,11 +5,10 @@ import MasonryStack
 struct FeatherCardView: View {
     let feather: Feather
     let showNumber: Bool
-    let onTap: () -> Void
     
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            AsyncImage(url: feather.imageUrlLg) { phase in
+            AsyncImage(url: feather.imageUrlSm) { phase in
                 switch phase {
                 case .empty:
                     ProgressView()
@@ -40,7 +39,6 @@ struct FeatherCardView: View {
         .background(Color.white)
         .cornerRadius(2)
         .animation(.spring(response: 0.3), value: showNumber)
-        .onTapGesture(perform: onTap)
     }
 }
 
@@ -49,8 +47,6 @@ struct FeathersView: View {
     @State private var isLoading = false
     @State private var error: Error?
     @State private var columnCount = 4
-    @State private var selectedFeather: Feather?
-    @State private var isShowingWebSheet = false
     
     private var spacing: CGFloat {
         switch columnCount {
@@ -64,80 +60,55 @@ struct FeathersView: View {
     }
     
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                Picker("Columns", selection: $columnCount.animation(.spring(response: 0.35, dampingFraction: 0.8))) {
-                    ForEach(1...8, id: \.self) { number in
-                        Text("\(number)")
-                    }
+        VStack(spacing: 0) {
+            Picker("Columns", selection: $columnCount.animation(.spring(response: 0.35, dampingFraction: 0.8))) {
+                ForEach(1...8, id: \.self) { number in
+                    Text("\(number)")
                 }
-                .pickerStyle(.segmented)
-                .padding()
-                
-                ScrollView {
-                    if isLoading {
-                        ProgressView()
+            }
+            .pickerStyle(.segmented)
+            .padding()
+            
+            ScrollView {
+                if isLoading {
+                    ProgressView()
+                        .padding()
+                } else if let error = error {
+                    VStack {
+                        Image(systemName: "exclamationmark.triangle")
+                            .font(.largeTitle)
+                            .foregroundColor(.red)
                             .padding()
-                    } else if let error = error {
-                        VStack {
-                            Image(systemName: "exclamationmark.triangle")
-                                .font(.largeTitle)
-                                .foregroundColor(.red)
-                                .padding()
-                            Text("Failed to load feathers")
-                                .font(.headline)
-                            Text(error.localizedDescription)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal)
-                            Button("Retry") {
-                                loadFeathers()
-                            }
-                            .padding()
+                        Text("Failed to load feathers")
+                            .font(.headline)
+                        Text(error.localizedDescription)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                        Button("Retry") {
+                            loadFeathers()
                         }
                         .padding()
-                    } else {
-                        MasonryVStack(columns: columnCount, spacing: spacing) {
-                            ForEach(feathers) { feather in
-                                FeatherCardView(
-                                    feather: feather,
-                                    showNumber: columnCount <= 4,
-                                    onTap: {
-                                        selectedFeather = feather
-                                        isShowingWebSheet = true
-                                    }
-                                )
+                    }
+                    .padding()
+                } else {
+                    MasonryVStack(columns: columnCount, spacing: spacing) {
+                        ForEach(feathers) { feather in
+                            NavigationLink {
+                                PaintingDetailView(painting: .feather(feather))
+                            } label: {
+                                FeatherCardView(feather: feather, showNumber: columnCount <= 4)
                             }
                         }
-                        .padding(.horizontal, spacing)
-                        .padding(.vertical)
-                        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: columnCount)
-                        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: spacing)
                     }
-                }
-                .background(Color(uiColor: .systemGray6))
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("500 Feathers")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if let feather = selectedFeather {
-                        Button {
-                            shareFeather(feather)
-                        } label: {
-                            Image(systemName: "square.and.arrow.up")
-                        }
-                    }
+                    .padding(.horizontal, spacing)
+                    .padding(.vertical)
+                    .animation(.spring(response: 0.35, dampingFraction: 0.8), value: columnCount)
+                    .animation(.spring(response: 0.35, dampingFraction: 0.8), value: spacing)
                 }
             }
-        }
-        .sheet(isPresented: $isShowingWebSheet) {
-            if let feather = selectedFeather,
-               let url = Config.Website.featherURL(feather.urlPath) {
-                WebView(url: url)
-                    .edgesIgnoringSafeArea(.bottom)
-            }
+            .background(Color(uiColor: .systemGray6))
         }
         .onAppear {
             loadFeathers()
@@ -156,23 +127,6 @@ struct FeathersView: View {
             case .failure(let error):
                 self.error = error
             }
-        }
-    }
-    
-    private func shareFeather(_ feather: Feather) {
-        guard let url = Config.Website.featherURL(feather.urlPath) else { return }
-        
-        let items: [Any] = [
-            "Check out this beautiful feather by Shayna Larsen!",
-            url
-        ]
-        
-        let activityVC = UIActivityViewController(activityItems: items, applicationActivities: nil)
-        
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first,
-           let rootVC = window.rootViewController {
-            rootVC.present(activityVC, animated: true)
         }
     }
 } 

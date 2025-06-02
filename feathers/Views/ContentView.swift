@@ -12,40 +12,68 @@ struct ContentView: View {
     @State private var selectedTab = 0
     
     init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .systemGray6
+        // Configure Tab Bar appearance
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithOpaqueBackground()
+        tabBarAppearance.backgroundColor = .systemGray6
         
-        // Use this appearance for both normal and scrolling
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
+        UITabBar.appearance().standardAppearance = tabBarAppearance
+        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+        
+        // Configure Navigation Bar appearance
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.configureWithOpaqueBackground()
+        navigationBarAppearance.backgroundColor = .systemBackground
+        
+        UINavigationBar.appearance().standardAppearance = navigationBarAppearance
+        UINavigationBar.appearance().compactAppearance = navigationBarAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navigationBarAppearance
     }
     
     var body: some View {
-        TabView(selection: $selectedTab) {
-            SpiritsView()
-                .tabItem {
-                    Label("Mountain Spirits", systemImage: "sparkles")
-                }
-                .tag(0)
-            
-            FeathersView()
-                .tabItem {
-                    Label("500 Feathers", systemImage: "sparkles")
-                }
-                .tag(1)
-            
-            ArrangementsView()
-                .tabItem {
-                    Label("Arrangements", systemImage: "sparkles")
-                }
-                .tag(2)
-            
-            MinituresView()
-                .tabItem {
-                    Label("Minitures", systemImage: "sparkles")
-                }
-                .tag(3)
+        NavigationView {
+            TabView(selection: $selectedTab) {
+                SpiritsView()
+                    .tabItem {
+                        Label("Mountain Spirits", systemImage: "mountain.2")
+                    }
+                    .tag(0)
+                
+                FeathersView()
+                    .tabItem {
+                        Label("500 Feathers", systemImage: "leaf")
+                    }
+                    .tag(1)
+                
+                ArrangementsView()
+                    .tabItem {
+                        Label("Arrangements", systemImage: "square.stack.3d.up")
+                    }
+                    .tag(2)
+                
+                MinituresView()
+                    .tabItem {
+                        Label("Minitures", systemImage: "photo.artframe")
+                    }
+                    .tag(3)
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle(tabTitle)
+        }
+    }
+    
+    private var tabTitle: String {
+        switch selectedTab {
+        case 0:
+            return "Mountain Spirits"
+        case 1:
+            return "500 Feathers"
+        case 2:
+            return "Arrangements"
+        case 3:
+            return "Minitures"
+        default:
+            return ""
         }
     }
 }

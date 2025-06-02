@@ -58,61 +58,61 @@ struct ArrangementsView: View {
     }
     
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                Picker("Columns", selection: $columnCount.animation(.spring(response: 0.35, dampingFraction: 0.8))) {
-                    ForEach(1...4, id: \.self) { number in
-                        Text("\(number)")
-                    }
+        VStack(spacing: 0) {
+            Picker("Columns", selection: $columnCount.animation(.spring(response: 0.35, dampingFraction: 0.8))) {
+                ForEach(1...4, id: \.self) { number in
+                    Text("\(number)")
                 }
-                .pickerStyle(.segmented)
-                .padding()
-                
-                ScrollView {
-                    if isLoading {
-                        ProgressView()
+            }
+            .pickerStyle(.segmented)
+            .padding()
+            
+            ScrollView {
+                if isLoading {
+                    ProgressView()
+                        .padding()
+                } else if let error = error {
+                    VStack {
+                        Image(systemName: "exclamationmark.triangle")
+                            .font(.largeTitle)
+                            .foregroundColor(.red)
                             .padding()
-                    } else if let error = error {
-                        VStack {
-                            Image(systemName: "exclamationmark.triangle")
-                                .font(.largeTitle)
-                                .foregroundColor(.red)
-                                .padding()
-                            Text("Failed to load arrangements")
-                                .font(.headline)
-                            Text(error.localizedDescription)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal)
-                            Button("Retry") {
-                                loadArrangements()
-                            }
-                            .padding()
+                        Text("Failed to load arrangements")
+                            .font(.headline)
+                        Text(error.localizedDescription)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                        Button("Retry") {
+                            loadArrangements()
                         }
                         .padding()
-                    } else {
-                        MasonryVStack(columns: columnCount, spacing: spacing) {
-                            ForEach(arrangements) { arrangement in
+                    }
+                    .padding()
+                } else {
+                    MasonryVStack(columns: columnCount, spacing: spacing) {
+                        ForEach(arrangements) { arrangement in
+                            NavigationLink {
+                                PaintingDetailView(painting: .arrangement(arrangement))
+                            } label: {
                                 ArrangementCardView(
                                     arrangement: arrangement,
                                     showNumber: columnCount < 3
                                 )
                             }
                         }
-                        .padding(.horizontal, spacing)
-                        .padding(.vertical)
-                        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: columnCount)
-                        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: spacing)
                     }
+                    .padding(.horizontal, spacing)
+                    .padding(.vertical)
+                    .animation(.spring(response: 0.35, dampingFraction: 0.8), value: columnCount)
+                    .animation(.spring(response: 0.35, dampingFraction: 0.8), value: spacing)
                 }
-                .background(Color(uiColor: .systemGray6))
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("Arrangements")
-            .onAppear {
-                loadArrangements()
-            }
+            .background(Color(uiColor: .systemGray6))
+        }
+        .onAppear {
+            loadArrangements()
         }
     }
     
