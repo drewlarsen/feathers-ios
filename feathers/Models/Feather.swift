@@ -57,11 +57,11 @@ struct Feather: Identifiable, Codable {
     
     var imageUrlSm: URL? {
         let filename = image_url_sm.hasSuffix(".jpeg") ? image_url_sm : image_url_sm.replacingOccurrences(of: ".webp", with: ".jpeg")
-        return URL(string: "https://smilingbear.nyc3.cdn.digitaloceanspaces.com/public/images/feathers/paintings/\(filename)")
+        return URL(string: Config.CDN.Paths.feathers + "/\(filename)")
     }
     var imageUrlLg: URL? {
         let filename = image_url_lg.hasSuffix(".jpeg") ? image_url_lg : image_url_lg.replacingOccurrences(of: ".webp", with: ".jpeg")
-        return URL(string: "https://smilingbear.nyc3.cdn.digitaloceanspaces.com/public/images/feathers/paintings/\(filename)")
+        return URL(string: Config.CDN.Paths.feathers + "/\(filename)")
     }
     
     let colors: [Color]
