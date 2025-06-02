@@ -23,21 +23,21 @@ struct ContentView: View {
     
     var body: some View {
         TabView(selection: $selectedTab) {
+            SpiritsView()
+                .tabItem {
+                    Label("Mountain Spirits", systemImage: "sparkles")
+                }
+                .tag(0)
+            
             FeathersView()
                 .tabItem {
                     Label("500 Feathers", systemImage: "sparkles")
                 }
-                .tag(0)
+                .tag(1)
             
             ArrangementsView()
                 .tabItem {
                     Label("Arrangements", systemImage: "sparkles")
-                }
-                .tag(1)
-            
-            SpiritsView()
-                .tabItem {
-                    Label("Mountain Spirits", systemImage: "sparkles")
                 }
                 .tag(2)
             

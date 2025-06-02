@@ -48,7 +48,7 @@ struct FeathersView: View {
     @State private var feathers: [Feather] = []
     @State private var isLoading = false
     @State private var error: Error?
-    @State private var columnCount = 2
+    @State private var columnCount = 4
     @State private var selectedFeather: Feather?
     @State private var isShowingWebSheet = false
     
@@ -134,7 +134,7 @@ struct FeathersView: View {
         }
         .sheet(isPresented: $isShowingWebSheet) {
             if let feather = selectedFeather,
-               let url = URL(string: "https://www.shaynalarsen.art/feathers/\(feather.urlPath)") {
+               let url = Config.Website.featherURL(feather.urlPath) {
                 WebView(url: url)
                     .edgesIgnoringSafeArea(.bottom)
             }
@@ -160,9 +160,11 @@ struct FeathersView: View {
     }
     
     private func shareFeather(_ feather: Feather) {
+        guard let url = Config.Website.featherURL(feather.urlPath) else { return }
+        
         let items: [Any] = [
             "Check out this beautiful feather by Shayna Larsen!",
-            URL(string: "https://www.shaynalarsen.art/feathers/\(feather.urlPath)")!
+            url
         ]
         
         let activityVC = UIActivityViewController(activityItems: items, applicationActivities: nil)
