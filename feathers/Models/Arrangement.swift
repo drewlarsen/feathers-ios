@@ -1,5 +1,11 @@
 import Foundation
 
+struct ArrangementFeather: Codable {
+    let id: String
+    let pos: Int
+    let flip: String
+}
+
 struct ArrangementCell: Codable {
     let feather_number: Int
     let position: Int
@@ -8,23 +14,24 @@ struct ArrangementCell: Codable {
 }
 
 struct Arrangement: Identifiable, Codable {
-    var id: Int { number }
+    let _id: String
+    var id: String { _id }
     
     let number: Int
     let cols: Int
     let rows: Int
-    let feathers: [Int]
+    let feathers: [ArrangementFeather]
     let is_composite: Bool
     let horizontal_spacing: Int
     let rotation: Int
     
-    let designer_id: String // MongoDB ObjectId as string
+    let designer_id: String
     
     let is_active: Bool
     let is_featured: Bool
     let has_current_images: Bool
     
-    let print_item_ids: [String] // Array of MongoDB ObjectIds as strings
+    let print_item_ids: [String]
     
     let name: String?
     
@@ -34,8 +41,8 @@ struct Arrangement: Identifiable, Codable {
     
     let cells: [ArrangementCell]
     
-    let createdAt: String?
-    let updatedAt: String?
+    let createdAt: String
+    let updatedAt: String
     
     // MARK: - Computed Properties
     
@@ -69,20 +76,27 @@ struct Arrangement: Identifiable, Codable {
     }
     
     var imageUrlLg: URL? {
-        URL(string: Config.CDN.Paths.arrangements + "/\(filenamePrefix)_lg.jpeg")
+        let urlString = Config.CDN.Paths.arrangements + "/\(filenamePrefix)_lg.webp"
+        print("🔍 Large image URL: \(urlString)")
+        return URL(string: urlString)
     }
     
     var imageUrlSm: URL? {
-        URL(string: Config.CDN.Paths.arrangements + "/\(filenamePrefix)_sm.jpeg")
+        let urlString = Config.CDN.Paths.arrangements + "/\(filenamePrefix)_sm.webp"
+        print("🔍 Small image URL: \(urlString)")
+        return URL(string: urlString)
     }
     
     var imageUrlPrint: URL? {
-        URL(string: Config.CDN.Paths.arrangements + "/\(filenamePrefix)_print.jpeg")
+        let urlString = Config.CDN.Paths.arrangements + "/\(filenamePrefix)_print.webp"
+        print("🔍 Print image URL: \(urlString)")
+        return URL(string: urlString)
     }
     
     // MARK: - Coding Keys
     
     enum CodingKeys: String, CodingKey {
+        case _id
         case number, cols, rows, feathers, is_composite, horizontal_spacing, rotation
         case designer_id, is_active, is_featured, has_current_images
         case print_item_ids, name, etsy_mug_listing_id

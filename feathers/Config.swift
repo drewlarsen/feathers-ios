@@ -10,7 +10,7 @@ enum Config {
         
         enum Paths {
             static let feathers = baseURL + "/feathers/paintings"
-            static let arrangements = baseURL + "/arrangements"
+            static let arrangements = baseURL + "/arrangements/paintings"
         }
     }
 } 
