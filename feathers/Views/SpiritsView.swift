@@ -34,8 +34,7 @@ struct SpiritsView: View {
     @State private var spirits: [Spirit] = []
     @State private var isLoading = false
     @State private var error: Error?
-    @State private var columnCount = 2
-    @State private var selectedSpirit: Spirit?
+    @Binding var columnCount: Int
     
     private var spacing: CGFloat {
         switch columnCount {
@@ -48,14 +47,6 @@ struct SpiritsView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            Picker("Columns", selection: $columnCount.animation(.spring(response: 0.35, dampingFraction: 0.8))) {
-                ForEach(1...4, id: \.self) { number in
-                    Text("\(number)")
-                }
-            }
-            .pickerStyle(.segmented)
-            .padding()
-            
             ScrollView {
                 if isLoading {
                     ProgressView()

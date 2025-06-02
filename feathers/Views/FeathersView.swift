@@ -46,7 +46,7 @@ struct FeathersView: View {
     @State private var feathers: [Feather] = []
     @State private var isLoading = false
     @State private var error: Error?
-    @State private var columnCount = 4
+    @Binding var columnCount: Int
     
     private var spacing: CGFloat {
         switch columnCount {
@@ -60,56 +60,49 @@ struct FeathersView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            Picker("Columns", selection: $columnCount.animation(.spring(response: 0.35, dampingFraction: 0.8))) {
-                ForEach(1...8, id: \.self) { number in
-                    Text("\(number)")
-                }
-            }
-            .pickerStyle(.segmented)
-            .padding()
-            
-            ScrollView {
-                if isLoading {
-                    ProgressView()
+        ScrollView {
+            if isLoading {
+                ProgressView()
+                    .padding()
+            } else if let error = error {
+                VStack {
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.largeTitle)
+                        .foregroundColor(.red)
                         .padding()
-                } else if let error = error {
-                    VStack {
-                        Image(systemName: "exclamationmark.triangle")
-                            .font(.largeTitle)
-                            .foregroundColor(.red)
-                            .padding()
-                        Text("Failed to load feathers")
-                            .font(.headline)
-                        Text(error.localizedDescription)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
-                        Button("Retry") {
-                            loadFeathers()
-                        }
-                        .padding()
+                    Text("Failed to load feathers")
+                        .font(.headline)
+                    Text(error.localizedDescription)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                    Button("Retry") {
+                        loadFeathers()
                     }
                     .padding()
-                } else {
-                    MasonryVStack(columns: columnCount, spacing: spacing) {
-                        ForEach(feathers) { feather in
-                            NavigationLink {
-                                PaintingDetailView(painting: .feather(feather))
-                            } label: {
-                                FeatherCardView(feather: feather, showNumber: columnCount <= 4)
-                            }
+                }
+                .padding()
+            } else {
+                MasonryVStack(columns: columnCount, spacing: spacing) {
+                    ForEach(feathers) { feather in
+                        NavigationLink {
+                            PaintingDetailView(painting: .feather(feather))
+                        } label: {
+                            FeatherCardView(feather: feather, showNumber: columnCount <= 4)
+                                .aspectRatio(contentMode: .fit)
+                                .frame(maxWidth: .infinity)
                         }
                     }
-                    .padding(.horizontal, spacing)
-                    .padding(.vertical)
-                    .animation(.spring(response: 0.35, dampingFraction: 0.8), value: columnCount)
-                    .animation(.spring(response: 0.35, dampingFraction: 0.8), value: spacing)
                 }
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, spacing)
+                .padding(.vertical, spacing)
             }
-            .background(Color(uiColor: .systemGray6))
         }
+        .background(Color(uiColor: .systemGray6))
+        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: columnCount)
+        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: spacing)
         .onAppear {
             loadFeathers()
         }

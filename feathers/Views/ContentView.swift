@@ -10,6 +10,27 @@ import WebKit
 
 struct ContentView: View {
     @State private var selectedTab = 0
+    @State private var spiritsColumns = 2
+    @State private var feathersColumns = 4
+    @State private var arrangementsColumns = 2
+    
+    private var currentMaxColumns: Int {
+        switch selectedTab {
+        case 0: return 4  // Spirits
+        case 1: return 8  // Feathers
+        case 2: return 4  // Arrangements
+        default: return 4
+        }
+    }
+    
+    private var currentColumnBinding: Binding<Int> {
+        switch selectedTab {
+        case 0: return $spiritsColumns
+        case 1: return $feathersColumns
+        case 2: return $arrangementsColumns
+        default: return .constant(2)
+        }
+    }
     
     init() {
         // Configure Tab Bar appearance
@@ -33,19 +54,19 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             TabView(selection: $selectedTab) {
-                SpiritsView()
+                SpiritsView(columnCount: $spiritsColumns)
                     .tabItem {
                         Label("Mountain Spirits", systemImage: "mountain.2")
                     }
                     .tag(0)
                 
-                FeathersView()
+                FeathersView(columnCount: $feathersColumns)
                     .tabItem {
                         Label("500 Feathers", systemImage: "leaf")
                     }
                     .tag(1)
                 
-                ArrangementsView()
+                ArrangementsView(columnCount: $arrangementsColumns)
                     .tabItem {
                         Label("Arrangements", systemImage: "square.stack.3d.up")
                     }
@@ -59,6 +80,14 @@ struct ContentView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle(tabTitle)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if selectedTab != 3 { // Don't show for Minitures
+                        GridLayoutButton(columnCount: currentColumnBinding, 
+                                      maxColumns: currentMaxColumns)
+                    }
+                }
+            }
         }
     }
     
