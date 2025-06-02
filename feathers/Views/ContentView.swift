@@ -25,7 +25,7 @@ struct ContentView: View {
         TabView(selection: $selectedTab) {
             FeathersView()
                 .tabItem {
-                    Label("Feathers", systemImage: "sparkles")
+                    Label("500 Feathers", systemImage: "sparkles")
                 }
                 .tag(0)
             
@@ -37,7 +37,7 @@ struct ContentView: View {
             
             SpiritsView()
                 .tabItem {
-                    Label("Spirits", systemImage: "sparkles")
+                    Label("Mountain Spirits", systemImage: "sparkles")
                 }
                 .tag(2)
             

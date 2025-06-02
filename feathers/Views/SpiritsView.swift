@@ -14,7 +14,7 @@ struct SpiritsView: View {
                 .frame(maxWidth: .infinity)
             }
             .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("Spirits")
+            .navigationTitle("Mountain Spirits")
         }
     }
 } 
