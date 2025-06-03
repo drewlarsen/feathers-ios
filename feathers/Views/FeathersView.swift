@@ -48,6 +48,7 @@ struct FeathersView: View {
     @State private var error: Error?
     @Binding var columnCount: Int
     let shuffleTrigger: Bool
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     private var spacing: CGFloat {
         switch columnCount {
@@ -103,6 +104,7 @@ struct FeathersView: View {
             }
         }
         .background(Color(uiColor: .systemGray6))
+        .edgesIgnoringSafeArea(.bottom)
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: columnCount)
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: spacing)
         .onAppear {

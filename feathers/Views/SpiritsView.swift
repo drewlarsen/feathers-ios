@@ -36,60 +36,61 @@ struct SpiritsView: View {
     @State private var error: Error?
     @Binding var columnCount: Int
     let shuffleTrigger: Bool
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     private var spacing: CGFloat {
         switch columnCount {
         case 1: return 16
         case 2: return 12
-        case 3...4: return 8
+        case 3: return 8
+        case 4: return 6
         default: return 12
         }
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                if isLoading {
-                    ProgressView()
+        ScrollView {
+            if isLoading {
+                ProgressView()
+                    .padding()
+            } else if let error = error {
+                VStack {
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.largeTitle)
+                        .foregroundColor(.red)
                         .padding()
-                } else if let error = error {
-                    VStack {
-                        Image(systemName: "exclamationmark.triangle")
-                            .font(.largeTitle)
-                            .foregroundColor(.red)
-                            .padding()
-                        Text("Failed to load spirits")
-                            .font(.headline)
-                        Text(error.localizedDescription)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
-                        Button("Retry") {
-                            loadSpirits()
-                        }
-                        .padding()
+                    Text("Failed to load spirits")
+                        .font(.headline)
+                    Text(error.localizedDescription)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                    Button("Retry") {
+                        loadSpirits()
                     }
                     .padding()
-                } else {
-                    MasonryVStack(columns: columnCount, spacing: spacing) {
-                        ForEach(spirits) { spirit in
-                            NavigationLink {
-                                PaintingDetailView(painting: spirit)
-                            } label: {
-                                SpiritCardView(spirit: spirit)
-                            }
+                }
+                .padding()
+            } else {
+                MasonryVStack(columns: columnCount, spacing: spacing) {
+                    ForEach(spirits) { spirit in
+                        NavigationLink {
+                            PaintingDetailView(painting: spirit)
+                        } label: {
+                            SpiritCardView(spirit: spirit)
                         }
                     }
-                    .padding(.horizontal, spacing)
-                    .padding(.vertical)
-                    .animation(.spring(response: 0.35, dampingFraction: 0.8), value: columnCount)
-                    .animation(.spring(response: 0.35, dampingFraction: 0.8), value: spacing)
-                    .animation(.spring(response: 0.35, dampingFraction: 0.8), value: shuffleTrigger)
                 }
+                .padding(.horizontal, spacing)
+                .padding(.vertical)
+                .animation(.spring(response: 0.35, dampingFraction: 0.8), value: columnCount)
+                .animation(.spring(response: 0.35, dampingFraction: 0.8), value: spacing)
+                .animation(.spring(response: 0.35, dampingFraction: 0.8), value: shuffleTrigger)
             }
-            .background(Color(uiColor: .systemGray6))
         }
+        .background(Color(uiColor: .systemGray6))
+        .edgesIgnoringSafeArea(.bottom)
         .onAppear {
             loadSpirits()
         }

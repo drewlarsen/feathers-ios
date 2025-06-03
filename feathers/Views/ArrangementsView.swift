@@ -47,6 +47,7 @@ struct ArrangementsView: View {
     @State private var error: Error?
     @Binding var columnCount: Int
     let shuffleTrigger: Bool
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     private var spacing: CGFloat {
         switch columnCount {
@@ -59,52 +60,51 @@ struct ArrangementsView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                if isLoading {
-                    ProgressView()
+        ScrollView {
+            if isLoading {
+                ProgressView()
+                    .padding()
+            } else if let error = error {
+                VStack {
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.largeTitle)
+                        .foregroundColor(.red)
                         .padding()
-                } else if let error = error {
-                    VStack {
-                        Image(systemName: "exclamationmark.triangle")
-                            .font(.largeTitle)
-                            .foregroundColor(.red)
-                            .padding()
-                        Text("Failed to load arrangements")
-                            .font(.headline)
-                        Text(error.localizedDescription)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
-                        Button("Retry") {
-                            loadArrangements()
-                        }
-                        .padding()
+                    Text("Failed to load arrangements")
+                        .font(.headline)
+                    Text(error.localizedDescription)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                    Button("Retry") {
+                        loadArrangements()
                     }
                     .padding()
-                } else {
-                    MasonryVStack(columns: columnCount, spacing: spacing) {
-                        ForEach(arrangements) { arrangement in
-                            NavigationLink {
-                                PaintingDetailView(painting: arrangement)
-                            } label: {
-                                ArrangementCardView(
-                                    arrangement: arrangement,
-                                    showNumber: columnCount < 3
-                                )
-                            }
+                }
+                .padding()
+            } else {
+                MasonryVStack(columns: columnCount, spacing: spacing) {
+                    ForEach(arrangements) { arrangement in
+                        NavigationLink {
+                            PaintingDetailView(painting: arrangement)
+                        } label: {
+                            ArrangementCardView(
+                                arrangement: arrangement,
+                                showNumber: columnCount < 3
+                            )
                         }
                     }
-                    .padding(.horizontal, spacing)
-                    .padding(.vertical)
-                    .animation(.spring(response: 0.35, dampingFraction: 0.8), value: columnCount)
-                    .animation(.spring(response: 0.35, dampingFraction: 0.8), value: spacing)
-                    .animation(.spring(response: 0.35, dampingFraction: 0.8), value: shuffleTrigger)
                 }
+                .padding(.horizontal, spacing)
+                .padding(.vertical)
+                .animation(.spring(response: 0.35, dampingFraction: 0.8), value: columnCount)
+                .animation(.spring(response: 0.35, dampingFraction: 0.8), value: spacing)
+                .animation(.spring(response: 0.35, dampingFraction: 0.8), value: shuffleTrigger)
             }
-            .background(Color(uiColor: .systemGray6))
         }
+        .background(Color(uiColor: .systemGray6))
+        .edgesIgnoringSafeArea(.bottom)
         .onAppear {
             loadArrangements()
         }
