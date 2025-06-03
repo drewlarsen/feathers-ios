@@ -13,7 +13,7 @@ struct ArrangementCell: Codable {
     let rotation: Int
 }
 
-struct Arrangement: Identifiable, Codable {
+struct Arrangement: Identifiable, Codable, Painting {
     let _id: String
     var id: String { _id }
     
@@ -43,6 +43,37 @@ struct Arrangement: Identifiable, Codable {
     
     let createdAt: String
     let updatedAt: String
+    
+    // MARK: - Painting Protocol Conformance
+    
+    var collectionName: String { "Arrangements" }
+    
+    var displayTitle: String { "Arrangement #\(number)" }
+    
+    var dimensions: String {
+        let width = cols * 5
+        let height = rows * 10
+        return "\(width)\" × \(height)\""
+    }
+    
+    var priceDisplay: String { "$125" }
+    
+    var description: String? {
+        let featherNumbers = feathers.map { String($0.id) }
+        switch featherNumbers.count {
+        case 0: return nil
+        case 1: return "An arrangement of feather number \(featherNumbers[0])"
+        case 2: return "An arrangement of feather numbers \(featherNumbers[0]) and \(featherNumbers[1])"
+        default:
+            let allButLast = featherNumbers.dropLast().joined(separator: ", ")
+            let last = featherNumbers.last!
+            return "An arrangement of feather numbers \(allButLast) & \(last)"
+        }
+    }
+    
+    var webUrl: URL? {
+        Config.Website.arrangementURL(_id)
+    }
     
     // MARK: - Computed Properties
     

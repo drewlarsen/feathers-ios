@@ -1,101 +1,7 @@
 import SwiftUI
 
-enum PaintingType {
-    case spirit(Spirit)
-    case feather(Feather)
-    case arrangement(Arrangement)
-    
-    var collectionName: String {
-        switch self {
-        case .spirit: return "Mountain Spirits"
-        case .feather: return "500 Feathers"
-        case .arrangement: return "Arrangements"
-        }
-    }
-    
-    var displayTitle: String {
-        switch self {
-        case .spirit(let spirit): return "\"\(spirit.name)\""
-        case .feather(let feather): return "Feather #\(feather.number)"
-        case .arrangement(let arrangement): return "Arrangement #\(arrangement.number)"
-        }
-    }
-    
-    var dimensions: String {
-        switch self {
-        case .spirit(let spirit): return "\(spirit.width)\" × \(spirit.height)\""
-        case .feather(let feather): 
-            let width = Int(feather.width)
-            let height = Int(feather.height)
-            return "\(width)\" × \(height)\""
-        case .arrangement(let arrangement): 
-            let width = arrangement.cols * 5
-            let height = arrangement.rows * 10
-            return "\(width)\" × \(height)\""
-        }
-    }
-    
-    var price: String {
-        switch self {
-        case .spirit(let spirit): 
-            if let price = spirit.price {
-                return price.replacingOccurrences(of: "Optional(\"", with: "")
-                         .replacingOccurrences(of: "\")", with: "")
-            }
-            return "Price on request"
-        case .feather: return "$225"
-        case .arrangement: return "$125"
-        }
-    }
-    
-    var description: String? {
-        switch self {
-        case .spirit(let spirit): return spirit.statement
-        case .feather(let feather): return feather.description
-        case .arrangement(let arrangement): 
-            let featherNumbers = arrangement.feathers.map { String($0.id) }
-            switch featherNumbers.count {
-            case 0: return nil
-            case 1: return "An arrangement of feather number \(featherNumbers[0])"
-            case 2: return "An arrangement of feather numbers \(featherNumbers[0]) and \(featherNumbers[1])"
-            default:
-                let allButLast = featherNumbers.dropLast().joined(separator: ", ")
-                let last = featherNumbers.last!
-                return "An arrangement of feather numbers \(allButLast) & \(last)"
-            }
-        }
-    }
-    
-    var imageUrl: URL? {
-        switch self {
-        case .spirit(let spirit): return spirit.imageUrlLg
-        case .feather(let feather): return feather.imageUrlLg
-        case .arrangement(let arrangement): return arrangement.imageUrlLg
-        }
-    }
-    
-    var webUrl: URL? {
-        switch self {
-        case .spirit(let spirit): return Config.Website.spiritURL(spirit.id)
-        case .feather(let feather): return Config.Website.featherURL(feather.urlPath)
-        case .arrangement(let arrangement): return Config.Website.arrangementURL(arrangement.id)
-        }
-    }
-    
-    var shareText: String {
-        switch self {
-        case .spirit(let spirit): 
-            return "Check out this beautiful \(spirit.name) painting by Shayna Larsen!"
-        case .feather:
-            return "Check out this beautiful feather painting by Shayna Larsen!"
-        case .arrangement:
-            return "Check out this beautiful arrangement painting by Shayna Larsen!"
-        }
-    }
-}
-
 struct PaintingDetailView: View {
-    let painting: PaintingType
+    let painting: Painting
     @Environment(\.dismiss) private var dismiss
     @State private var isShowingWebSheet = false
     
@@ -103,7 +9,7 @@ struct PaintingDetailView: View {
         ScrollView {
             VStack(spacing: 24) {
                 // Image
-                AsyncImage(url: painting.imageUrl) { phase in
+                AsyncImage(url: painting.imageUrlLg) { phase in
                     switch phase {
                     case .empty:
                         ProgressView()
@@ -133,7 +39,7 @@ struct PaintingDetailView: View {
                     Text(painting.displayTitle)
                         .font(.system(size: 28, weight: .regular, design: .serif))
                     
-                    Text("\(painting.dimensions) — \(painting.price)")
+                    Text("\(painting.dimensions) — \(painting.priceDisplay)")
                         .font(.system(size: 17, weight: .regular))
                         .foregroundColor(.secondary)
                     

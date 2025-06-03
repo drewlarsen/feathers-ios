@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Feather: Identifiable, Codable {
+struct Feather: Identifiable, Codable, Painting {
     var id: Int { number }
     
     let slug: String
@@ -30,7 +30,7 @@ struct Feather: Identifiable, Codable {
     let adornment: String?
     let is_print_available: Bool
     let is_original_available: Bool
-    let price: String?
+    let rawPrice: String?
     let image_width: Int
     let image_height: Int
     let etsy_print_listing_id: Int?
@@ -55,10 +55,23 @@ struct Feather: Identifiable, Codable {
     let image_url_sm: String
     let image_url_lg: String
     
+    // MARK: - Painting Protocol Conformance
+    
+    var collectionName: String { "500 Feathers" }
+    
+    var displayTitle: String { "Feather #\(number)" }
+    
+    var priceDisplay: String { "$225" }
+    
+    var webUrl: URL? {
+        Config.Website.featherURL(urlPath)
+    }
+    
     var imageUrlSm: URL? {
         let filename = image_url_sm.hasSuffix(".jpeg") ? image_url_sm : image_url_sm.replacingOccurrences(of: ".webp", with: ".jpeg")
         return URL(string: Config.CDN.Paths.feathers + "/\(filename)")
     }
+    
     var imageUrlLg: URL? {
         let filename = image_url_lg.hasSuffix(".jpeg") ? image_url_lg : image_url_lg.replacingOccurrences(of: ".webp", with: ".jpeg")
         return URL(string: Config.CDN.Paths.feathers + "/\(filename)")
@@ -91,5 +104,28 @@ struct Feather: Identifiable, Codable {
         let lightness: Double
         let hue: Double
         let names: [String: String]
+    }
+    
+    // MARK: - Coding Keys
+    
+    enum CodingKeys: String, CodingKey {
+        case slug, number, name, is_name_generated
+        case original_painted_date, year, collection_name
+        case is_active, description, bird_slug, dimensions
+        case height, width, orientation, paper, mount
+        case pigment, adornment, is_print_available
+        case is_original_available, rawPrice = "price"
+        case image_width, image_height
+        case etsy_print_listing_id, etsy_original_listing_id
+        case histogram, complementary_histogram
+        case triad_1_histogram, triad_2_histogram
+        case dark_color_hex, dark_color_rgb
+        case light_color_hex, light_color_rgb
+        case symbol_ids, similar_feather_ids
+        case complementary_feather_ids
+        case triad_1_feather_ids, triad_2_feather_ids
+        case palette_distances
+        case image_url_sm, image_url_lg
+        case colors, createdAt, updatedAt
     }
 }

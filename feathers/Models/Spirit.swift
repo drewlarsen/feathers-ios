@@ -1,6 +1,6 @@
 import Foundation
 
-struct Spirit: Identifiable, Codable {
+struct Spirit: Identifiable, Codable, Painting {
     let id: String
     let name: String
     let year: String
@@ -23,6 +23,26 @@ struct Spirit: Identifiable, Codable {
     let are_prints_available: Bool?
     let signature_position_horizontal: Double
     
+    // MARK: - Painting Protocol Conformance
+    
+    var collectionName: String { "Mountain Spirits" }
+    
+    var displayTitle: String { "\"\(name)\"" }
+    
+    var description: String? { statement }
+    
+    var priceDisplay: String {
+        guard let price = self.price else {
+            return "Price on request"
+        }
+        return price.replacingOccurrences(of: "Optional(\"", with: "")
+                 .replacingOccurrences(of: "\")", with: "")
+    }
+    
+    var webUrl: URL? {
+        Config.Website.spiritURL(id)
+    }
+    
     // Computed properties for full image URLs
     var imageUrlSm: URL? {
         URL(string: Config.CDN.baseURL + gallery_image_sm)
@@ -40,5 +60,16 @@ struct Spirit: Identifiable, Codable {
     
     var aspectRatio: CGFloat {
         CGFloat(width) / CGFloat(height)
+    }
+    
+    // MARK: - Coding Keys
+    
+    enum CodingKeys: String, CodingKey {
+        case id, name, year, dimensions, width, height
+        case print_ratio, price, paper, mount
+        case is_original_available, statement, orientation
+        case gallery_image_sm, gallery_image_lg, print_no_sig_file
+        case secondary_images, pigment, collection_name
+        case are_prints_available, signature_position_horizontal
     }
 } 

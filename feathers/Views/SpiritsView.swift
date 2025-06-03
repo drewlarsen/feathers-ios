@@ -74,7 +74,7 @@ struct SpiritsView: View {
                     MasonryVStack(columns: columnCount, spacing: spacing) {
                         ForEach(spirits) { spirit in
                             NavigationLink {
-                                PaintingDetailView(painting: .spirit(spirit))
+                                PaintingDetailView(painting: spirit)
                             } label: {
                                 SpiritCardView(spirit: spirit)
                             }

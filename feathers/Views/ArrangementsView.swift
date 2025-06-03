@@ -86,7 +86,7 @@ struct ArrangementsView: View {
                     MasonryVStack(columns: columnCount, spacing: spacing) {
                         ForEach(arrangements) { arrangement in
                             NavigationLink {
-                                PaintingDetailView(painting: .arrangement(arrangement))
+                                PaintingDetailView(painting: arrangement)
                             } label: {
                                 ArrangementCardView(
                                     arrangement: arrangement,

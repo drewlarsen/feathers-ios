@@ -87,7 +87,7 @@ struct FeathersView: View {
                 MasonryVStack(columns: columnCount, spacing: spacing) {
                     ForEach(feathers) { feather in
                         NavigationLink {
-                            PaintingDetailView(painting: .feather(feather))
+                            PaintingDetailView(painting: feather)
                         } label: {
                             FeatherCardView(feather: feather, showNumber: columnCount <= 4)
                                 .aspectRatio(contentMode: .fit)
