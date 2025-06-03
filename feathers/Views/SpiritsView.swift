@@ -35,6 +35,7 @@ struct SpiritsView: View {
     @State private var isLoading = false
     @State private var error: Error?
     @Binding var columnCount: Int
+    let shuffleTrigger: Bool
     
     private var spacing: CGFloat {
         switch columnCount {
@@ -84,12 +85,18 @@ struct SpiritsView: View {
                     .padding(.vertical)
                     .animation(.spring(response: 0.35, dampingFraction: 0.8), value: columnCount)
                     .animation(.spring(response: 0.35, dampingFraction: 0.8), value: spacing)
+                    .animation(.spring(response: 0.35, dampingFraction: 0.8), value: shuffleTrigger)
                 }
             }
             .background(Color(uiColor: .systemGray6))
         }
         .onAppear {
             loadSpirits()
+        }
+        .onChange(of: shuffleTrigger) { _ in
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                spirits.shuffle()
+            }
         }
     }
     
@@ -101,14 +108,7 @@ struct SpiritsView: View {
             isLoading = false
             switch result {
             case .success(let spirits):
-                self.spirits = spirits.sorted { first, second in
-                    // Sort by year first (newest first)
-                    if first.year != second.year {
-                        return first.year > second.year
-                    }
-                    // Then by name
-                    return first.name < second.name
-                }
+                self.spirits = spirits.shuffled()
             case .failure(let error):
                 self.error = error
             }

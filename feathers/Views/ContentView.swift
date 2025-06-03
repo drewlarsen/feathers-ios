@@ -9,17 +9,25 @@ import SwiftUI
 import WebKit
 
 struct ContentView: View {
+    @StateObject private var shuffleState = ShuffleState()
     @State private var selectedTab = 0
     @State private var spiritsColumns = 2
     @State private var feathersColumns = 4
     @State private var arrangementsColumns = 2
     
-    private var currentMaxColumns: Int {
+    @ViewBuilder
+    private var currentView: some View {
         switch selectedTab {
-        case 0: return 4  // Spirits
-        case 1: return 8  // Feathers
-        case 2: return 4  // Arrangements
-        default: return 4
+        case 0:
+            SpiritsView(columnCount: $spiritsColumns, shuffleTrigger: shuffleState.spiritsTrigger)
+        case 1:
+            FeathersView(columnCount: $feathersColumns, shuffleTrigger: shuffleState.feathersTrigger)
+        case 2:
+            ArrangementsView(columnCount: $arrangementsColumns, shuffleTrigger: shuffleState.arrangementsTrigger)
+        case 3:
+            MinituresView()
+        default:
+            EmptyView()
         }
     }
     
@@ -29,6 +37,15 @@ struct ContentView: View {
         case 1: return $feathersColumns
         case 2: return $arrangementsColumns
         default: return .constant(2)
+        }
+    }
+    
+    private var currentMaxColumns: Int {
+        switch selectedTab {
+        case 0: return 4  // Spirits
+        case 1: return 8  // Feathers
+        case 2: return 4  // Arrangements
+        default: return 2
         }
     }
     
@@ -54,19 +71,19 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             TabView(selection: $selectedTab) {
-                SpiritsView(columnCount: $spiritsColumns)
+                SpiritsView(columnCount: $spiritsColumns, shuffleTrigger: shuffleState.spiritsTrigger)
                     .tabItem {
                         Label("Mountain Spirits", systemImage: "mountain.2")
                     }
                     .tag(0)
                 
-                FeathersView(columnCount: $feathersColumns)
+                FeathersView(columnCount: $feathersColumns, shuffleTrigger: shuffleState.feathersTrigger)
                     .tabItem {
                         Label("500 Feathers", systemImage: "leaf")
                     }
                     .tag(1)
                 
-                ArrangementsView(columnCount: $arrangementsColumns)
+                ArrangementsView(columnCount: $arrangementsColumns, shuffleTrigger: shuffleState.arrangementsTrigger)
                     .tabItem {
                         Label("Arrangements", systemImage: "square.stack.3d.up")
                     }
@@ -81,10 +98,15 @@ struct ContentView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle(tabTitle)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if selectedTab != 3 { // Don't show for Minitures
-                        GridLayoutButton(columnCount: currentColumnBinding, 
-                                      maxColumns: currentMaxColumns)
+                if selectedTab != 3 { // Don't show for Minitures
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        HStack(spacing: 16) {
+                            ShuffleButton {
+                                shuffleState.shuffleCurrent(tab: selectedTab)
+                            }
+                            GridLayoutButton(columnCount: currentColumnBinding, 
+                                          maxColumns: currentMaxColumns)
+                        }
                     }
                 }
             }

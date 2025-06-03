@@ -47,6 +47,7 @@ struct FeathersView: View {
     @State private var isLoading = false
     @State private var error: Error?
     @Binding var columnCount: Int
+    let shuffleTrigger: Bool
     
     private var spacing: CGFloat {
         switch columnCount {
@@ -98,6 +99,7 @@ struct FeathersView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, spacing)
                 .padding(.vertical, spacing)
+                .animation(.spring(response: 0.35, dampingFraction: 0.8), value: shuffleTrigger)
             }
         }
         .background(Color(uiColor: .systemGray6))
@@ -105,6 +107,11 @@ struct FeathersView: View {
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: spacing)
         .onAppear {
             loadFeathers()
+        }
+        .onChange(of: shuffleTrigger) { _ in
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                feathers.shuffle()
+            }
         }
     }
     
@@ -116,7 +123,7 @@ struct FeathersView: View {
             isLoading = false
             switch result {
             case .success(let feathers):
-                self.feathers = feathers.sorted { $0.id < $1.id }
+                self.feathers = feathers.shuffled()
             case .failure(let error):
                 self.error = error
             }

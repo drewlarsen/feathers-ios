@@ -46,6 +46,7 @@ struct ArrangementsView: View {
     @State private var isLoading = false
     @State private var error: Error?
     @Binding var columnCount: Int
+    let shuffleTrigger: Bool
     
     private var spacing: CGFloat {
         switch columnCount {
@@ -99,12 +100,18 @@ struct ArrangementsView: View {
                     .padding(.vertical)
                     .animation(.spring(response: 0.35, dampingFraction: 0.8), value: columnCount)
                     .animation(.spring(response: 0.35, dampingFraction: 0.8), value: spacing)
+                    .animation(.spring(response: 0.35, dampingFraction: 0.8), value: shuffleTrigger)
                 }
             }
             .background(Color(uiColor: .systemGray6))
         }
         .onAppear {
             loadArrangements()
+        }
+        .onChange(of: shuffleTrigger) { _ in
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                arrangements.shuffle()
+            }
         }
     }
     
@@ -116,7 +123,7 @@ struct ArrangementsView: View {
             isLoading = false
             switch result {
             case .success(let arrangements):
-                self.arrangements = arrangements.filter { $0.is_active }
+                self.arrangements = arrangements.filter { $0.is_active }.shuffled()
             case .failure(let error):
                 self.error = error
             }

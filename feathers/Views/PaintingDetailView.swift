@@ -30,7 +30,7 @@ struct PaintingDetailView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .background(Color.white)
-                .cornerRadius(8)
+                .cornerRadius(2)
                 .shadow(radius: 2, y: 1)
                 .padding(.horizontal)
                 
