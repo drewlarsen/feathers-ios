@@ -6,7 +6,7 @@ struct SpiritCardView: View {
     let spirit: Spirit
     
     var body: some View {
-        WebImage(url: spirit.imageUrlSm)
+        WebImage(url: spirit.image_full_url_sm)
             .resizable()
             .indicator(.activity)
             .transition(.fade)
@@ -61,7 +61,13 @@ struct SpiritsView: View {
                         NavigationLink {
                             PaintingDetailView(painting: spirit)
                         } label: {
-                            SpiritCardView(spirit: spirit)
+                            WebImage(url: spirit.image_full_url_sm)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white)
+                                .cornerRadius(2)
+                                .shadow(radius: 2, y: 1)
                         }
                     }
                 }

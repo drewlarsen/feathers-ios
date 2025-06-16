@@ -57,25 +57,25 @@ struct Feather: Identifiable, Codable, Painting {
     
     // MARK: - Painting Protocol Conformance
     
-    var collectionName: String { "500 Feathers" }
+    var display_title: String { "Feather #\(number)" }
     
-    var displayTitle: String { "Feather #\(number)" }
+    var price_display: String { "$225" }
     
-    var priceDisplay: String { "$225" }
-    
-    var webUrl: URL? {
+    var web_url: URL? {
         Config.Website.featherURL(urlPath)
     }
     
-    var imageUrlSm: URL? {
-        let filename = image_url_sm.hasSuffix(".jpeg") ? image_url_sm : image_url_sm.replacingOccurrences(of: ".webp", with: ".jpeg")
+    var image_full_url_sm: URL? {
+        let filename = self.image_url_sm.hasSuffix(".jpeg") ? self.image_url_sm : self.image_url_sm.replacingOccurrences(of: ".webp", with: ".jpeg")
         return URL(string: Config.CDN.Paths.feathers + "/\(filename)")
     }
     
-    var imageUrlLg: URL? {
-        let filename = image_url_lg.hasSuffix(".jpeg") ? image_url_lg : image_url_lg.replacingOccurrences(of: ".webp", with: ".jpeg")
+    var image_full_url_lg: URL? {
+        let filename = self.image_url_lg.hasSuffix(".jpeg") ? self.image_url_lg : self.image_url_lg.replacingOccurrences(of: ".webp", with: ".jpeg")
         return URL(string: Config.CDN.Paths.feathers + "/\(filename)")
     }
+    
+    // MARK: - Additional Properties
     
     let colors: [Color]
     let createdAt: String?

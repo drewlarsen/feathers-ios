@@ -9,7 +9,7 @@ struct FeatherCardView: View {
     
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            WebImage(url: feather.imageUrlSm)
+            WebImage(url: feather.image_full_url_sm)
                 .resizable()
                 .scaledToFit()
                 .frame(maxWidth: .infinity)
@@ -72,9 +72,13 @@ struct FeathersView: View {
                         NavigationLink {
                             PaintingDetailView(painting: feather)
                         } label: {
-                            FeatherCardView(feather: feather, showNumber: columnCount <= 4)
-                                .aspectRatio(contentMode: .fit)
+                            WebImage(url: feather.image_full_url_sm)
+                                .resizable()
+                                .scaledToFit()
                                 .frame(maxWidth: .infinity)
+                                .background(Color.white)
+                                .cornerRadius(2)
+                                .shadow(radius: 2, y: 1)
                         }
                     }
                 }

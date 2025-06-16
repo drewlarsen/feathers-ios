@@ -8,7 +8,7 @@ struct ArrangementCardView: View {
     
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            WebImage(url: arrangement.imageUrlSm)
+            WebImage(url: arrangement.image_full_url_sm)
                 .resizable()
                 .scaledToFit()
                 .frame(maxWidth: .infinity)

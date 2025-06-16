@@ -1,20 +1,26 @@
 import Foundation
 
 protocol Painting {
-    var collectionName: String { get }
-    var displayTitle: String { get }
+    var collection_name: String { get }
+    var display_title: String { get }
     var dimensions: String { get }
-    var priceDisplay: String { get }
+    var price_display: String { get }
     var description: String? { get }
-    var imageUrlLg: URL? { get }
-    var imageUrlSm: URL? { get }
-    var webUrl: URL? { get }
-    var shareText: String { get }
+    var image_full_url_lg: URL? { get }
+    var image_full_url_sm: URL? { get }
+    var web_url: URL? { get }
+    var share_text: String { get }
+    var is_original_available: Bool { get }
 }
 
 // Default implementation for shareText
 extension Painting {
-    var shareText: String {
-        "Check out this beautiful \(collectionName.dropLast()) painting by Shayna Larsen!"
+    var share_text: String {
+        "Check out this beautiful \(collection_name.dropLast()) painting by Shayna Larsen!"
+    }
+    
+    // Default implementation for arrangements which are always available
+    var is_original_available: Bool {
+        true
     }
 } 

@@ -46,9 +46,9 @@ struct Arrangement: Identifiable, Codable, Painting {
     
     // MARK: - Painting Protocol Conformance
     
-    var collectionName: String { "Arrangements" }
+    let collection_name = "Arrangements"
     
-    var displayTitle: String { "Arrangement #\(number)" }
+    var display_title: String { "Arrangement #\(number)" }
     
     var dimensions: String {
         let width = cols * 5
@@ -56,7 +56,7 @@ struct Arrangement: Identifiable, Codable, Painting {
         return "\(width)\" × \(height)\""
     }
     
-    var priceDisplay: String { "$125" }
+    var price_display: String { "$125" }
     
     var description: String? {
         let featherNumbers = feathers.map { String($0.id) }
@@ -71,11 +71,23 @@ struct Arrangement: Identifiable, Codable, Painting {
         }
     }
     
-    var webUrl: URL? {
+    var web_url: URL? {
         Config.Website.arrangementURL(_id)
     }
     
-    // MARK: - Computed Properties
+    var image_full_url_lg: URL? {
+        let urlString = Config.CDN.Paths.arrangements + "/\(filenamePrefix)_lg.webp"
+        print("🔍 Large image URL: \(urlString)")
+        return URL(string: urlString)
+    }
+    
+    var image_full_url_sm: URL? {
+        let urlString = Config.CDN.Paths.arrangements + "/\(filenamePrefix)_sm.webp"
+        print("🔍 Small image URL: \(urlString)")
+        return URL(string: urlString)
+    }
+    
+    // MARK: - Additional Properties
     
     var aspect_ratio: String {
         let ratio = Double(cols) / (Double(rows) * 2)
@@ -104,18 +116,6 @@ struct Arrangement: Identifiable, Codable, Painting {
     
     private var filenamePrefix: String {
         "arr-\(numberPadded())"
-    }
-    
-    var imageUrlLg: URL? {
-        let urlString = Config.CDN.Paths.arrangements + "/\(filenamePrefix)_lg.webp"
-        print("🔍 Large image URL: \(urlString)")
-        return URL(string: urlString)
-    }
-    
-    var imageUrlSm: URL? {
-        let urlString = Config.CDN.Paths.arrangements + "/\(filenamePrefix)_sm.webp"
-        print("🔍 Small image URL: \(urlString)")
-        return URL(string: urlString)
     }
     
     var imageUrlPrint: URL? {

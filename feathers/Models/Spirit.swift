@@ -25,13 +25,11 @@ struct Spirit: Identifiable, Codable, Painting {
     
     // MARK: - Painting Protocol Conformance
     
-    var collectionName: String { "Mountain Spirits" }
-    
-    var displayTitle: String { "\"\(name)\"" }
+    var display_title: String { "\"\(name)\"" }
     
     var description: String? { statement }
     
-    var priceDisplay: String {
+    var price_display: String {
         guard let price = self.price else {
             return "Price on request"
         }
@@ -39,16 +37,16 @@ struct Spirit: Identifiable, Codable, Painting {
                  .replacingOccurrences(of: "\")", with: "")
     }
     
-    var webUrl: URL? {
+    var web_url: URL? {
         Config.Website.spiritURL(id)
     }
     
     // Computed properties for full image URLs
-    var imageUrlSm: URL? {
+    var image_full_url_sm: URL? {
         URL(string: Config.CDN.baseURL + gallery_image_sm)
     }
     
-    var imageUrlLg: URL? {
+    var image_full_url_lg: URL? {
         URL(string: Config.CDN.baseURL + gallery_image_lg)
     }
     

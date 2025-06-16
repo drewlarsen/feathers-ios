@@ -10,7 +10,7 @@ struct PaintingDetailView: View {
         ScrollView {
             VStack(spacing: 24) {
                 // Image
-                WebImage(url: painting.imageUrlLg)
+                WebImage(url: painting.image_full_url_lg)
                     .resizable()
                     .scaledToFit()
                     .frame(maxWidth: .infinity)
@@ -21,12 +21,16 @@ struct PaintingDetailView: View {
                 
                 // Title and Details
                 VStack(alignment: .leading, spacing: 16) {
-                    Text(painting.displayTitle)
+                    Text(painting.display_title)
                         .font(.system(size: 28, weight: .regular, design: .serif))
                     
-                    Text("\(painting.dimensions) — \(painting.priceDisplay)")
-                        .font(.system(size: 17, weight: .regular))
-                        .foregroundColor(.secondary)
+                    HStack {
+                        Text("\(painting.dimensions) — \(painting.price_display) — ")
+                        Text(painting.is_original_available ? "Available" : "Sold")
+                            .foregroundColor(painting.is_original_available ? .green : .red)
+                    }
+                    .font(.system(size: 17, weight: .regular))
+                    .foregroundColor(.secondary)
                     
                     if let description = painting.description {
                         Text(description)
@@ -43,7 +47,7 @@ struct PaintingDetailView: View {
         }
         .background(Color(uiColor: .systemGray6))
         .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle(painting.collectionName)
+        .navigationTitle(painting.collection_name)
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
@@ -72,7 +76,7 @@ struct PaintingDetailView: View {
             }
         }
         .sheet(isPresented: $isShowingWebSheet) {
-            if let url = painting.webUrl {
+            if let url = painting.web_url {
                 WebView(url: url)
                     .edgesIgnoringSafeArea(.bottom)
             }
@@ -80,10 +84,10 @@ struct PaintingDetailView: View {
     }
     
     private func sharePainting() {
-        guard let url = painting.webUrl else { return }
+        guard let url = painting.web_url else { return }
         
         let items: [Any] = [
-            painting.shareText,
+            painting.share_text,
             url
         ]
         
