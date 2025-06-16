@@ -1,4 +1,5 @@
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct PaintingDetailView: View {
     let painting: Painting
@@ -9,30 +10,14 @@ struct PaintingDetailView: View {
         ScrollView {
             VStack(spacing: 24) {
                 // Image
-                AsyncImage(url: painting.imageUrlLg) { phase in
-                    switch phase {
-                    case .empty:
-                        ProgressView()
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 300)
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                    case .failure:
-                        Image(systemName: "photo")
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 300)
-                            .background(Color.gray.opacity(0.2))
-                    @unknown default:
-                        EmptyView()
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .background(Color.white)
-                .cornerRadius(2)
-                .shadow(radius: 2, y: 1)
-                .padding(.horizontal)
+                WebImage(url: painting.imageUrlLg)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.white)
+                    .cornerRadius(2)
+                    .shadow(radius: 2, y: 1)
+                    .padding(.horizontal)
                 
                 // Title and Details
                 VStack(alignment: .leading, spacing: 16) {
