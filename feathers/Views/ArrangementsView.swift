@@ -1,5 +1,6 @@
 import SwiftUI
 import MasonryStack
+import SDWebImageSwiftUI
 
 struct ArrangementCardView: View {
     let arrangement: Arrangement
@@ -7,26 +8,12 @@ struct ArrangementCardView: View {
     
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            AsyncImage(url: arrangement.imageUrlSm) { phase in
-                switch phase {
-                case .empty:
-                    ProgressView()
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 200)
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: .infinity)
-                case .failure:
-                    Image(systemName: "photo")
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 200)
-                        .background(Color.gray.opacity(0.2))
-                @unknown default:
-                    EmptyView()
-                }
-            }
+            WebImage(url: arrangement.imageUrlSm)
+                .resizable()
+                .indicator(.activity)
+                .transition(.fade)
+                .scaledToFit()
+                .frame(maxWidth: .infinity)
             
             if showNumber {
                 Text("#\(arrangement.number)")
