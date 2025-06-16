@@ -10,8 +10,6 @@ struct ArrangementCardView: View {
         ZStack(alignment: .bottomLeading) {
             WebImage(url: arrangement.imageUrlSm)
                 .resizable()
-                .indicator(.activity)
-                .transition(.fade)
                 .scaledToFit()
                 .frame(maxWidth: .infinity)
             
@@ -48,10 +46,7 @@ struct ArrangementsView: View {
     
     var body: some View {
         ScrollView {
-            if isLoading {
-                ProgressView()
-                    .padding()
-            } else if let error = error {
+            if let error = error {
                 VStack {
                     Image(systemName: "exclamationmark.triangle")
                         .font(.largeTitle)
@@ -94,7 +89,9 @@ struct ArrangementsView: View {
         .background(Color(uiColor: .systemGray6))
         .edgesIgnoringSafeArea(.bottom)
         .onAppear {
-            loadArrangements()
+            if arrangements.isEmpty {
+                loadArrangements()
+            }
         }
         .onChange(of: shuffleTrigger) { _ in
             withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
@@ -104,11 +101,7 @@ struct ArrangementsView: View {
     }
     
     private func loadArrangements() {
-        isLoading = true
-        error = nil
-        
         APIService.shared.fetchArrangements { result in
-            isLoading = false
             switch result {
             case .success(let arrangements):
                 self.arrangements = arrangements.filter { $0.is_active }.shuffled()
