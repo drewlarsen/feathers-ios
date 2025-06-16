@@ -100,6 +100,7 @@ struct FeathersView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, spacing)
                 .padding(.vertical, spacing)
+                .padding(.bottom, 80)
                 .animation(.spring(response: 0.35, dampingFraction: 0.8), value: shuffleTrigger)
             }
         }

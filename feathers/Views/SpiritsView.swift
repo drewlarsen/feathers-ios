@@ -83,7 +83,8 @@ struct SpiritsView: View {
                     }
                 }
                 .padding(.horizontal, spacing)
-                .padding(.vertical)
+                .padding(.vertical, spacing)
+                .padding(.bottom, 80)
                 .animation(.spring(response: 0.35, dampingFraction: 0.8), value: columnCount)
                 .animation(.spring(response: 0.35, dampingFraction: 0.8), value: spacing)
                 .animation(.spring(response: 0.35, dampingFraction: 0.8), value: shuffleTrigger)
