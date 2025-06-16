@@ -1,32 +1,19 @@
 import SwiftUI
 import MasonryStack
+import SDWebImageSwiftUI
 
 struct SpiritCardView: View {
     let spirit: Spirit
     
     var body: some View {
-        AsyncImage(url: spirit.imageUrlSm) { phase in
-            switch phase {
-            case .empty:
-                ProgressView()
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 200)
-            case .success(let image):
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: .infinity)
-            case .failure:
-                Image(systemName: "photo")
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 200)
-                    .background(Color.gray.opacity(0.2))
-            @unknown default:
-                EmptyView()
-            }
-        }
-        .background(Color.white)
-        .cornerRadius(2)
+        WebImage(url: spirit.imageUrlSm)
+            .resizable()
+            .indicator(.activity)
+            .transition(.fade)
+            .scaledToFit()
+            .frame(maxWidth: .infinity)
+            .background(Color.white)
+            .cornerRadius(2)
     }
 }
 
