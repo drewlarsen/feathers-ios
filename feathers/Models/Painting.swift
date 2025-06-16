@@ -16,7 +16,7 @@ protocol Painting {
 // Default implementation for shareText
 extension Painting {
     var share_text: String {
-        "Check out this beautiful \(collection_name.dropLast()) painting by Shayna Larsen!"
+        "Check out this beautiful watercolor painting by Shayna Larsen!"
     }
     
     // Default implementation for arrangements which are always available
