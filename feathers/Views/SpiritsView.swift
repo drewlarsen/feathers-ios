@@ -19,7 +19,6 @@ struct SpiritCardView: View {
 
 struct SpiritsView: View {
     @State private var spirits: [Spirit] = []
-    @State private var isLoading = false
     @State private var error: Error?
     @Binding var columnCount: Int
     let shuffleTrigger: Bool
@@ -37,10 +36,7 @@ struct SpiritsView: View {
     
     var body: some View {
         ScrollView {
-            if isLoading {
-                ProgressView()
-                    .padding()
-            } else if let error = error {
+            if let error = error {
                 VStack {
                     Image(systemName: "exclamationmark.triangle")
                         .font(.largeTitle)
@@ -80,7 +76,9 @@ struct SpiritsView: View {
         .background(Color(uiColor: .systemGray6))
         .edgesIgnoringSafeArea(.bottom)
         .onAppear {
-            loadSpirits()
+            if spirits.isEmpty {
+                loadSpirits()
+            }
         }
         .onChange(of: shuffleTrigger) { _ in
             withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
@@ -90,11 +88,7 @@ struct SpiritsView: View {
     }
     
     private func loadSpirits() {
-        isLoading = true
-        error = nil
-        
         APIService.shared.fetchSpirits { result in
-            isLoading = false
             switch result {
             case .success(let spirits):
                 self.spirits = spirits.shuffled()
