@@ -1,6 +1,7 @@
 import SwiftUI
 import WebKit
 import MasonryStack
+import SDWebImageSwiftUI
 
 struct FeatherCardView: View {
     let feather: Feather
@@ -8,26 +9,10 @@ struct FeatherCardView: View {
     
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            AsyncImage(url: feather.imageUrlSm) { phase in
-                switch phase {
-                case .empty:
-                    ProgressView()
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 200)
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: .infinity)
-                case .failure:
-                    Image(systemName: "photo")
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 200)
-                        .background(Color.gray.opacity(0.2))
-                @unknown default:
-                    EmptyView()
-                }
-            }
+            WebImage(url: feather.imageUrlSm)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: .infinity)
             
             if showNumber {
                 Text("#\(feather.number)")
@@ -44,7 +29,6 @@ struct FeatherCardView: View {
 
 struct FeathersView: View {
     @State private var feathers: [Feather] = []
-    @State private var isLoading = false
     @State private var error: Error?
     @Binding var columnCount: Int
     let shuffleTrigger: Bool
@@ -63,10 +47,7 @@ struct FeathersView: View {
     
     var body: some View {
         ScrollView {
-            if isLoading {
-                ProgressView()
-                    .padding()
-            } else if let error = error {
+            if let error = error {
                 VStack {
                     Image(systemName: "exclamationmark.triangle")
                         .font(.largeTitle)
@@ -109,7 +90,9 @@ struct FeathersView: View {
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: columnCount)
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: spacing)
         .onAppear {
-            loadFeathers()
+            if feathers.isEmpty {
+                loadFeathers()
+            }
         }
         .onChange(of: shuffleTrigger) { _ in
             withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
@@ -119,11 +102,7 @@ struct FeathersView: View {
     }
     
     private func loadFeathers() {
-        isLoading = true
-        error = nil
-        
         APIService.shared.fetchFeathers { result in
-            isLoading = false
             switch result {
             case .success(let feathers):
                 self.feathers = feathers.shuffled()
