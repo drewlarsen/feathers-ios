@@ -14,6 +14,7 @@ struct SpiritCardView: View {
             .frame(maxWidth: .infinity)
             .background(Color.white)
             .cornerRadius(2)
+            .shadow(radius: 2, y: 1)
     }
 }
 
@@ -61,13 +62,7 @@ struct SpiritsView: View {
                         NavigationLink {
                             PaintingDetailView(painting: spirit)
                         } label: {
-                            WebImage(url: spirit.image_full_url_sm)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(maxWidth: .infinity)
-                                .background(Color.white)
-                                .cornerRadius(2)
-                                .shadow(radius: 2, y: 1)
+                            SpiritCardView(spirit: spirit)
                         }
                     }
                 }

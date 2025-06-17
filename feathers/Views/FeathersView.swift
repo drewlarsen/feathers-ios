@@ -13,6 +13,9 @@ struct FeatherCardView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(maxWidth: .infinity)
+                .background(Color.white)
+                .cornerRadius(2)
+                .shadow(radius: 2, y: 1)
             
             if showNumber {
                 Text("#\(feather.number)")
@@ -21,8 +24,6 @@ struct FeatherCardView: View {
                     .padding(8)
             }
         }
-        .background(Color.white)
-        .cornerRadius(2)
         .animation(.spring(response: 0.3), value: showNumber)
     }
 }
@@ -72,13 +73,10 @@ struct FeathersView: View {
                         NavigationLink {
                             PaintingDetailView(painting: feather)
                         } label: {
-                            WebImage(url: feather.image_full_url_sm)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(maxWidth: .infinity)
-                                .background(Color.white)
-                                .cornerRadius(2)
-                                .shadow(radius: 2, y: 1)
+                            FeatherCardView(
+                                feather: feather,
+                                showNumber: columnCount <= 4
+                            )
                         }
                     }
                 }

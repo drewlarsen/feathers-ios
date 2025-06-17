@@ -10,8 +10,13 @@ struct ArrangementCardView: View {
         ZStack(alignment: .bottomLeading) {
             WebImage(url: arrangement.image_full_url_sm)
                 .resizable()
+                .indicator(.activity)
+                .transition(.fade)
                 .scaledToFit()
                 .frame(maxWidth: .infinity)
+                .background(Color.white)
+                .cornerRadius(2)
+                .shadow(radius: 2, y: 1)
             
             if showNumber {
                 Text("#\(arrangement.number)")
@@ -20,8 +25,6 @@ struct ArrangementCardView: View {
                     .padding(8)
             }
         }
-        .background(Color.white)
-        .cornerRadius(2)
         .animation(.spring(response: 0.3), value: showNumber)
     }
 }
