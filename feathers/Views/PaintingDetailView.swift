@@ -1,10 +1,111 @@
 import SwiftUI
 import SDWebImageSwiftUI
 
+struct FullScreenImageView: View {
+    let url: URL?
+    @Environment(\.dismiss) private var dismiss
+    @State private var scale: CGFloat = 1.0
+    @State private var lastScale: CGFloat = 1.0
+    @State private var offset: CGSize = .zero
+    @State private var lastOffset: CGSize = .zero
+    @State private var viewOffset: CGFloat = 0
+    
+    var body: some View {
+        ZStack {
+            Color.black
+                .ignoresSafeArea()
+            
+            WebImage(url: url)
+                .resizable()
+                .indicator(.activity)
+                .transition(.fade)
+                .scaledToFit()
+                .scaleEffect(scale)
+                .offset(offset)
+                .offset(y: viewOffset)
+                .simultaneousGesture(
+                    MagnificationGesture()
+                        .onChanged { value in
+                            let delta = value / lastScale
+                            lastScale = value
+                            scale = min(max(scale * delta, 1), 4)
+                        }
+                        .onEnded { _ in
+                            lastScale = 1.0
+                            if scale < 1.0 {
+                                withAnimation {
+                                    scale = 1.0
+                                }
+                            }
+                        }
+                )
+                .simultaneousGesture(
+                    DragGesture()
+                        .onChanged { value in
+                            if scale > 1 {
+                                offset = CGSize(
+                                    width: lastOffset.width + value.translation.width,
+                                    height: lastOffset.height + value.translation.height
+                                )
+                            } else {
+                                viewOffset = value.translation.height
+                            }
+                        }
+                        .onEnded { value in
+                            if scale > 1 {
+                                lastOffset = offset
+                            } else {
+                                if abs(value.translation.height) > 100 {
+                                    dismiss()
+                                } else {
+                                    withAnimation(.spring()) {
+                                        viewOffset = 0
+                                    }
+                                }
+                            }
+                        }
+                )
+                .onTapGesture(count: 2) {
+                    withAnimation {
+                        if scale > 1 {
+                            scale = 1.0
+                            offset = .zero
+                            lastOffset = .zero
+                        } else {
+                            scale = 3.0
+                        }
+                    }
+                }
+            
+            VStack {
+                HStack {
+                    Spacer()
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 20, weight: .medium))
+                            .foregroundColor(.white)
+                            .padding(12)
+                            .background(Color.black.opacity(0.5))
+                            .clipShape(Circle())
+                    }
+                    .padding([.top, .trailing], 16)
+                }
+                Spacer()
+            }
+        }
+        .background(Color.black)
+        .ignoresSafeArea()
+        .statusBar(hidden: true)
+    }
+}
+
 struct PaintingDetailView: View {
     let painting: Painting
     @Environment(\.dismiss) private var dismiss
     @State private var isShowingWebSheet = false
+    @State private var isShowingFullScreen = false
     
     var body: some View {
         ScrollView {
@@ -18,6 +119,9 @@ struct PaintingDetailView: View {
                     .cornerRadius(2)
                     .shadow(radius: 2, y: 1)
                     .padding(.horizontal)
+                    .onTapGesture {
+                        isShowingFullScreen = true
+                    }
                 
                 // Title and Details
                 VStack(alignment: .leading, spacing: 16) {
@@ -80,6 +184,9 @@ struct PaintingDetailView: View {
                 WebView(url: url)
                     .edgesIgnoringSafeArea(.bottom)
             }
+        }
+        .fullScreenCover(isPresented: $isShowingFullScreen) {
+            FullScreenImageView(url: painting.image_full_url_lg)
         }
     }
     
