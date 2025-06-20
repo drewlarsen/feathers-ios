@@ -1,11 +1,11 @@
 import SwiftUI
 
-struct MinituresView: View {
+struct MiniaturesView: View {
     var body: some View {
         GeometryReader { geometry in
             VStack {
                 Spacer()
-                Text("Minitures Coming Soon")
+                Text("Miniatures Coming Soon")
                     .font(.title2)
                     .foregroundColor(.secondary)
                 Spacer()

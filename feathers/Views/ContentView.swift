@@ -63,10 +63,10 @@ struct ContentView: View {
             .tag(2)
             
             NavigationStack {
-                MinituresView()
-                    .navigationTitle("Minitures")
+                MiniaturesView()
+                    .navigationTitle("Miniatures")
             }
-            .tabItem { Label("Minitures", systemImage: "photo.artframe") }
+            .tabItem { Label("Miniatures", systemImage: "photo.artframe") }
             .tag(3)
         }
         .onRotate { orientation in
